@@ -14,7 +14,7 @@ let verificateToken = (req, res, next) => {
                 err: {
                     message: 'Token no valido'
                 }
-            })
+            }) 
         }
         // en esta parte se crea un req los datos del usuario
         req.usuario = decoded.usuario;

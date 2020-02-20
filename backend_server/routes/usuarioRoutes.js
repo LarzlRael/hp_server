@@ -19,9 +19,16 @@ router.get('/user', (req, res) => {
 // Metodo para poder ver todos los usuarios
 // =============================
 router.get('/users', verificateToken, async (req, res) => {
+
+    let desde = req.body.desde || 0;
+    desde = Number(desde);
+
     try {
-        const allUsers = await UsuarioModel.find({}, 'nombre email img role');
-        res.status(200).json({ users: allUsers, ok: true })
+        const allUsers = await UsuarioModel.find({}, 'nombre email img role')
+            .skip(desde)
+            .limit(5);
+        const count = await UsuarioModel.count();
+        res.status(200).json({ users: allUsers, total: count, ok: true })
     } catch (error) {
         res.status(500).json({ error });
     }
