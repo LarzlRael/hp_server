@@ -25,7 +25,13 @@ const usuarioSchema = new Schema({
     img: {
         type: String
     },
-    role: { type: String, required: true, default: 'USER_ROLE', enum: rolesValidos }
+    role: {
+        type: String,
+        required: true, default:
+            'USER_ROLE',
+        enum: rolesValidos
+    },
+    google: { type: Boolean, default: false }
 
 });
 usuarioSchema.plugin(uniqueValidator, { message: 'El correo debe ser unico' })
