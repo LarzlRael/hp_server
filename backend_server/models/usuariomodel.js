@@ -15,7 +15,6 @@ const usuarioSchema = new Schema({
     },
     email: {
         type: String,
-        unique: true,
         required: [true, 'El nombre es necesario']
     },
     password: {
@@ -23,7 +22,8 @@ const usuarioSchema = new Schema({
         required: [true, 'la contraseña es necesaria']
     },
     img: {
-        type: String
+        type: String,
+        default:'no se proporciona imagen'
     },
     role: {
         type: String,

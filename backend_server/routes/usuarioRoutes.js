@@ -20,18 +20,49 @@ router.get('/user', (req, res) => {
 // =============================
 router.get('/users', verificateToken, async (req, res) => {
 
-    let desde = req.body.desde || 0;
+    // let desde = req.body.desde || 0;
+    // desde = Number(desde);
+
+    // try {
+    //     const allUsers = await UsuarioModel.find({}, 'nombre email img role google')
+    //         .skip(desde)
+    //         .limit(5);
+    //     const count = await UsuarioModel.count();
+    //     res.status(200).json({ users: allUsers, total: count, ok: true })
+    // } catch (error) {
+    //     res.status(500).json({ error });
+    // }
+    var desde = req.query.desde || 0;
     desde = Number(desde);
 
-    try {
-        const allUsers = await UsuarioModel.find({}, 'nombre email img role')
-            .skip(desde)
-            .limit(5);
-        const count = await UsuarioModel.count();
-        res.status(200).json({ users: allUsers, total: count, ok: true })
-    } catch (error) {
-        res.status(500).json({ error });
-    }
+    UsuarioModel.find({}, 'nombre email img role google')
+        .skip(desde)
+        .limit(5)
+        .exec(
+            (err, usuarios) => {
+
+                if (err) {
+                    return res.status(500).json({
+                        ok: false,
+                        mensaje: 'Error cargando usuario',
+                        errors: err
+                    });
+                }
+
+                UsuarioModel.count({}, (err, conteo) => {
+
+                    res.status(200).json({
+                        ok: true,
+                        users: usuarios,
+                        total: conteo
+                    });
+
+                })
+
+
+
+
+            });
 })
 // ========================
 // Añadir un nuevo usuario
@@ -63,27 +94,78 @@ router.post('/add-user', async (req, res) => {
 
 router.put('/edit/:id', async (req, res) => {
     const { id } = req.params;
-    try {
-        await UsuarioModel.findById(id);
+    const usuario = await UsuarioModel.findById(id);
+    if (usuario) {
+        console.log('ususario encontrado ', usuario)
 
-    } catch (error) {
-        res.status(400).json({ err: error, message: 'no se encontro ninguna coicidencia' })
+        const { nombre, img, email, role } = req.body;
+
+        const newUser = {
+            nombre,
+            img,
+            email,
+            role
+        }
+        console.log('usuario editado ', newUser);
+
+        try {
+            const userUpdated = await UsuarioModel.findOneAndUpdate(id, newUser)
+            res.status(200).json({ ok: true, message: 'Usuario actualizado', usuario: userUpdated })
+        } catch (error) {
+            res.status(400).json({ ok: false, error })
+        }
+    } else {
+        res.status(400).json({ message: 'no se encontro el usuario' });
+
     }
 
-    const { nombre, img, email, role } = req.body;
-    const newUser = {
-        nombre,
-        img,
-        email,
-        role
-    }
-    try {
-        await UsuarioModel.findOneAndUpdate(id, newUser, { new: true, runValidators: true });
-        res.status(400).json({ message: 'Usuario actulizado' })
-    } catch (error) {
-        res.status(400).json({ err: true, message: error })
-    }
+    // var id = req.params.id;
+    // var body = req.body;
 
+    // UsuarioModel.findById(id, (err, usuario) => {
+
+
+    //     if (err) {
+    //         return res.status(500).json({
+    //             ok: false,
+    //             mensaje: 'Error al buscar usuario',
+    //             errors: err
+    //         });
+    //     }
+
+    //     if (!usuario) {
+    //         return res.status(400).json({
+    //             ok: false,
+    //             mensaje: 'El usuario con el id ' + id + ' no existe',
+    //             errors: { message: 'No existe un usuario con ese ID' }
+    //         });
+    //     }
+
+
+    //     usuario.nombre = body.nombre;
+    //     usuario.email = body.email;
+    //     usuario.role = body.role;
+
+    //     usuario.save((err, userUpdated) => {
+
+    //         if (err) {
+    //             return res.status(400).json({
+    //                 ok: false,
+    //                 mensaje: 'Error al actualizar usuario',
+    //                 errors: err
+    //             });
+    //         }
+
+    //         usuarioGuardado.password = ':)';
+
+    //         res.status(200).json({
+    //             ok: true,
+    //             usuario: userUpdated
+    //         });
+
+    //     });
+
+    // });
 
 
 })

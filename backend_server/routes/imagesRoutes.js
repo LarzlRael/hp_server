@@ -26,3 +26,8 @@ router.get('/:tipo/:img', (req, res) => {
 
 
 module.exports = router;
+
+
+// http://localhost:3000/img/usuarios/5e585f6865076f5a647a3dd9-721.png
+
+// http://localhost:3000/usuarios/5e59a23170f4bb2bf2254b95-248.jpg

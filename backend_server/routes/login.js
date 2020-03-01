@@ -34,7 +34,12 @@ router.post('/login', async (req, res) => {
             const token = jwt.sign({ usuario: userdb }, SEED, {
                 expiresIn: 14400
             })
-            return res.status(200).json({ err: true, message: token })
+            return res.status(200).json({
+                err: false,
+                token,
+                userdb,
+                id: userdb._id
+            })
         }
 
 
@@ -71,19 +76,22 @@ router.post('/google', async (req, res) => {
         const user = await UsuarioModel.findOne({ email: googleUser.email });
         console.log(googleUser)
         if (user) {
-            if (user.google) {
+            if (user.google === false) {
                 res.status(400).json({
                     ok: false,
                     mensaje: 'debe de usar su auteticacion normal'
                 });
             } else {
-                const token = jwt.sign({ usuario: userdb }, SEED, {
+
+                user.password = ':)'
+                const token = jwt.sign({ user }, SEED, {
                     expiresIn: 14400
                 })
                 return res.status(200).json({
-                    err: true,
-                    message: token,
-                    user
+                    ok: true,
+                    userdb: user,
+                    token,
+                    id: user._id
                 })
             }
         } else {

@@ -109,19 +109,23 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
 
 
             var pathViejo = './uploads/usuarios/' + usuario.img;
-
+            console.log('path viejo' + pathViejo)
             // Si existe, elimina la imagen anterior
-            try {
-                if (fs.existsSync(pathViejo)) {
-                    console.log('imagen borrada')
-                    fs.unlink(pathViejo);
-                }else{
-                    console.log('paso algo ')
+            if (fs.existsSync(pathViejo)) {
+                try {
+                    fs.unlink(pathViejo,(err)=>{
+                        if(err){
+                            console.log(err)
+                        }else{
+                            console.log('imagen subida correctamente')
+                        }
+                    });
+                } catch (error) {
+                    console.log(error)
                 }
-
-            } catch (error) {
-                res.status(400).json(error);
             }
+            
+
 
             usuario.img = nombreArchivo;
 
@@ -209,8 +213,6 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
 
         });
     }
-
-
 }
 
 
