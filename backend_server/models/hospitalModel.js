@@ -5,7 +5,7 @@ const HospitalSchema = new Schema({
         type: String, required: [true, 'El nombre es necesario'],
     },
     img: {
-        type: String, required: false, default: 'aqui va un imagen'
+        type: String, required: false, default: 'imagen no proporcinado'
     },
     usuario: { type: Schema.Types.ObjectId, ref: 'Usuario' }
 }, { collection: 'hospitales' });

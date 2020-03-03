@@ -113,10 +113,10 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
             // Si existe, elimina la imagen anterior
             if (fs.existsSync(pathViejo)) {
                 try {
-                    fs.unlink(pathViejo,(err)=>{
-                        if(err){
+                    fs.unlink(pathViejo, (err) => {
+                        if (err) {
                             console.log(err)
-                        }else{
+                        } else {
                             console.log('imagen subida correctamente')
                         }
                     });
@@ -124,7 +124,7 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
                     console.log(error)
                 }
             }
-            
+
 
 
             usuario.img = nombreArchivo;
@@ -196,7 +196,13 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
 
             // Si existe, elimina la imagen anterior
             if (fs.existsSync(pathViejo)) {
-                fs.unlink(pathViejo);
+                fs.unlink(pathViejo, (err) => {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        console.log('imagen subida correctamente')
+                    }
+                });
             }
 
             hospital.img = nombreArchivo;
@@ -206,7 +212,7 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
                 return res.status(200).json({
                     ok: true,
                     mensaje: 'Imagen de hospital actualizada',
-                    usuario: hospitalActualizado
+                    hospital: hospitalActualizado
                 });
 
             })

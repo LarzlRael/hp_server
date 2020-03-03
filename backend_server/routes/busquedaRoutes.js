@@ -43,7 +43,7 @@ router.get('/coleccion/:tabla/:busqueda', async (req, res) => {
         case 'medicos':
             promesa = buscarMedicos(busqueda, regex);
             break;
-        case 'usuarios':
+        case 'hospitales':
             promesa = buscarHospitales(busqueda, regex);
             break;
 
