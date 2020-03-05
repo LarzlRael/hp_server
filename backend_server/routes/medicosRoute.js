@@ -47,7 +47,11 @@ router.post('/add-medico', verificateToken, async (req, res) => {
     const newMedico = new medicoModel(newM);
     try {
         await newMedico.save();
-        res.status(200).json({ status: 'ok', message: 'Medico added successfully' })
+        res.status(200).json({
+            status: 'ok',
+            message: 'Medico added successfully',
+            newMedico
+        })
     } catch (error) {
         res.status(500).json({ err: true, error })
     }
@@ -70,14 +74,14 @@ router.put('/edit/:id', verificateToken, async (req, res) => {
     const { nombre } = req.body;
     const { hospital } = req.body;
     const usuario = req.usuario._id;
-    const newUser = {
+    const newMedico = {
         nombre,
         usuario,
         hospital
     }
     try {
-        await medicoModel.findOneAndUpdate(id, newUser, { new: true, runValidators: true });
-        res.status(400).json({ message: 'Medico actualizado' })
+        await medicoModel.findOneAndUpdate(id, newMedico, { new: true, runValidators: true });
+        res.status(200).json({ message: 'Medico actualizado', newMedico })
     } catch (error) {
         res.status(400).json({ err: true, message: error })
     }
@@ -101,6 +105,25 @@ router.delete('/:id', verificateToken, async (req, res) => {
         res.status(400).json({ err: true, message: error })
     }
 
-})
+});
 
+// =============================
+// obtener un medico
+// =============================
+
+router.get('/:id', verificateToken, async (req, res) => {
+    let { id } = req.params;
+
+    const medico = await medicoModel.findById(id)
+        .populate('usuario', 'nombre email img')
+        .populate('hospital')
+        .exec();
+
+    if (medico) {
+        return res.status(200).json(medico);
+    } else {
+        return res.status(400).json({ error: 'no se encontro el medico' })
+    }
+
+})
 module.exports = router;

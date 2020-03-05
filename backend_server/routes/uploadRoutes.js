@@ -161,8 +161,16 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
             var pathViejo = './uploads/medicos/' + medico.img;
 
             // Si existe, elimina la imagen anterior
-            if (fs.existsSync(pathViejo)) {
-                fs.unlink(pathViejo);
+            try {
+                fs.unlink(pathViejo, (err) => {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        console.log('imagen subida correctamente')
+                    }
+                });
+            } catch (error) {
+                console.log(error)
             }
 
             medico.img = nombreArchivo;
@@ -172,7 +180,7 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
                 return res.status(200).json({
                     ok: true,
                     mensaje: 'Imagen de médico actualizada',
-                    usuario: medicoActualizado
+                    medicoActualizado
                 });
 
             })
