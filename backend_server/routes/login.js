@@ -38,7 +38,8 @@ router.post('/login', async (req, res) => {
                 err: false,
                 token,
                 userdb,
-                id: userdb._id
+                id: userdb._id,
+                menu: obtenerMenu(userdb.role)
             })
         }
 
@@ -91,7 +92,8 @@ router.post('/google', async (req, res) => {
                     ok: true,
                     userdb: user,
                     token,
-                    id: user._id
+                    id: user._id,
+                    menu: obtenerMenu(userdb.role)
                 })
             }
         } else {
@@ -108,7 +110,8 @@ router.post('/google', async (req, res) => {
             return res.status(200).json({
                 err: true,
                 message: 'usuario creado',
-                nuevo_user
+                nuevo_user,
+                menu: obtenerMenu(nuevo_user.role)
             })
 
         }
@@ -143,7 +146,8 @@ async function verify(token) {
         nombre: payload.name,
         email: payload.email,
         img: payload.picture,
-        google: true
+        google: true,
+
     }
 }
 
@@ -153,5 +157,41 @@ async function verify(token) {
 // fin de google auth
 // =============================
 
+function obtenerMenu(Role) {
+
+    let menu = [
+        {
+            titulo: "Principal",
+            icono: "mdi mdi-gauge",
+            submenu: [
+                { titulo: 'Dashboard', url: '/dashboard' },
+                { titulo: 'ProgressBar', url: '/progress' },
+                { titulo: 'Gráficas', url: '/grafica1' },
+                { titulo: 'RXJS', url: '/rxjs' },
+            ]
+        },
+        {
+            titulo: "Mantenimiento",
+            icono: "mdi mdi-folder-lock-open",
+            submenu: [
+                /* { titulo: 'Usuarios', url: '/usuarios' }, */
+                { titulo: 'Hosptiales', url: '/hospitales' },
+                { titulo: 'Medicos', url: '/medicos' },
+            ]
+        },
+
+
+    ];
+
+    if (Role === 'ADMIN_ROLE') {
+        menu[1].submenu.unshift({
+            titulo: 'Usuarios', url: '/usuarios'
+        });
+    }
+
+    return menu;
+
+
+}
 
 module.exports = router;

@@ -4,10 +4,11 @@ const router = Router();
 const userModel = require('../models/usuariomodel');
 const medicoModel = require('../models/medicoModel');
 const hospitalModel = require('../models/hospitalModel');
+const { verificateToken } = require('../middlewares/jsonVerification')
 // =============================
 // metodo para buscar por todos los campos
 // =============================
-router.get('/todo/:busqueda', async (req, res) => {
+router.get('/todo/:busqueda', verificateToken, async (req, res) => {
 
     let { busqueda } = req.params;
     let regex = new RegExp(busqueda, 'i');
@@ -51,7 +52,7 @@ router.get('/coleccion/:tabla/:busqueda', async (req, res) => {
             return res.status(400).json({
                 ok: false,
                 mensage: 'no se encontraon coincidencias',
-                error:'error de tabla/coleccion no existe'
+                error: 'error de tabla/coleccion no existe'
             })
     }
     promesa.then(data => {
@@ -109,7 +110,7 @@ function buscarMedicos(busqueda, regex) {
     return new Promise((resolve, reject) => {
 
         medicoModel.find({ nombre: regex })
-            .populate('usuario', 'nombre email')
+            .populate('usuario', 'nombre email img')
             .populate('hospital')
             .exec((err, medicos) => {
                 if (err) {

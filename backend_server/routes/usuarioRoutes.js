@@ -100,16 +100,14 @@ router.put('/edit/:id', async (req, res) => {
 
         const { nombre, img, email, role } = req.body;
 
-        const newUser = {
-            nombre,
-            img,
-            email,
-            role
-        }
-        console.log('usuario editado ', newUser);
+       
+        usuario.nombre = nombre;
+        usuario.img = img;
+        usuario.email = email;
+        usuario.role = role;
 
         try {
-            const userUpdated = await UsuarioModel.findOneAndUpdate(id, newUser)
+            const userUpdated = await usuario.save();
             res.status(200).json({ ok: true, message: 'Usuario actualizado', usuario: userUpdated })
         } catch (error) {
             res.status(400).json({ ok: false, error })
