@@ -1,6 +1,6 @@
 const { Router } = require('express')
 
-const { verificateToken } = require('../middlewares/jsonVerification')
+const { verificateToken, verificaRol, verificaUnoMismo } = require('../middlewares/jsonVerification')
 
 const router = Router();
 //dbModel
@@ -92,25 +92,27 @@ router.post('/add-user', async (req, res) => {
 // Actualizar usuario
 // ========================
 
-router.put('/edit/:id', async (req, res) => {
+router.put('/edit/:id', [verificateToken, verificaUnoMismo], async (req, res) => {
     const { id } = req.params;
     const usuario = await UsuarioModel.findById(id);
     if (usuario) {
-        console.log('ususario encontrado ', usuario)
 
         const { nombre, img, email, role } = req.body;
 
-       
         usuario.nombre = nombre;
         usuario.img = img;
         usuario.email = email;
         usuario.role = role;
-
+        console.log(usuario)
         try {
             const userUpdated = await usuario.save();
             res.status(200).json({ ok: true, message: 'Usuario actualizado', usuario: userUpdated })
         } catch (error) {
-            res.status(400).json({ ok: false, error })
+            res.status(400).json({
+                ok: false,
+                err: 'hubo un error en el guardado',
+                error
+            })
         }
     } else {
         res.status(400).json({ message: 'no se encontro el usuario' });
@@ -172,7 +174,7 @@ router.put('/edit/:id', async (req, res) => {
 // Eliminar un registro
 // =============================
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', [verificateToken, verificaRol], async (req, res) => {
     const { id } = req.params;
     try {
         const user = await UsuarioModel.findByIdAndDelete(id);
